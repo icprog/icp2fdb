@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>accept.bmp</file>
+        <file>exit.bmp</file>
+        <file>refresh.bmp</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file>accept.ico</file>
+        <file>exit.ico</file>
+        <file>refresh.ico</file>
+        <file>edu_science_2446.ico</file>
+    </qresource>
+</RCC>
