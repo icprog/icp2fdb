@@ -34,6 +34,7 @@ public:
     void PollVosn(int i);
     void Poll1Uvr2Nord(int i);
     void Poll4Uvr(int i);
+    void PollGaz(int i);
 signals:
     void textchange(int iUzel,QString newText);
     void insert(QString Text);

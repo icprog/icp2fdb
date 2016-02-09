@@ -12,20 +12,22 @@
 
 #include "./src_libmodbus/modbus.h"
 
-//#define PRILUKI
-#define GGPZ
+#define PRILUKI
+//#define GGPZ
 
 
 #ifdef PRILUKI
 #define SERVERFLAG 83
 #define SERVERFLAG1UVR2NORD 23
 #define SERVERFLAG4UVR 33
+#define SERVERFLAGGAZ 47
 #endif
 
 #ifdef GGPZ
 #define SERVERFLAG 84
 #define SERVERFLAG1UVR2NORD 24
 #define SERVERFLAG4UVR 34
+#define SERVERFLAGGAZ 48
 #endif
 
 
@@ -36,12 +38,12 @@ struct uzel
     QString OdbcName;
     QString TableName;
     QString text;
-    QString type;  //"vosn","1uvr2nord","4uvr"
+    QString type;  //"vosn","1uvr2nord","4uvr","gaz"
 } uzels[]=
 {
 #ifdef PRILUKI
 
-    "172.16.9.243","fire_lelaki","LELAKI_SOU","waiting queue...","vosn",
+    "172.16.223.2","fire_lelaki","LELAKI_SOU","waiting queue...","vosn",
 
     "172.16.57.69","fire_ggpz_gned","GGPZ_GNED_SOU","waiting queue...","vosn",
     "172.16.57.70","fire_ggpz_lelaki_vhod","GGPZ_LELAKI_VHOD_SOU","waiting queue...","vosn",
@@ -53,12 +55,14 @@ struct uzel
     "172.16.57.20","fire_gzu1_gned","GZU1_GNED_SOU","waiting queue...","vosn",
     "172.16.57.74","fire_ggpz_4vov","GGPZ_4VOV_SOU","waiting queue...","4uvr",
     "172.16.48.100","fire_yaroshiv","YAROSHIV_SOU","waiting queue...","vosn",
+    "172.16.48.102","fire_talal_z_yaroshiv","TALAL_Z_YAROSHIV_SOU","waiting queue...","vosn",
+    "172.16.57.72","fire_ggpz_gaz","GGPZ_GAZ","waiting queue...","gaz",
 
 #endif
 
 #ifdef GGPZ
 
-        "172.16.9.243","fire_lelaki","LELAKI_SOU","waiting queue...","vosn",
+        "172.16.223.2","fire_lelaki","LELAKI_SOU","waiting queue...","vosn",
 
         "172.16.57.69","fire_ggpz_gned","GGPZ_GNED_SOU","waiting queue...","vosn",
         "172.16.57.70","fire_ggpz_lelaki_vhod","GGPZ_LELAKI_VHOD_SOU","waiting queue...","vosn",
@@ -70,7 +74,8 @@ struct uzel
         "172.16.57.20","fire_gzu1_gned","GZU1_GNED_SOU","waiting queue...","vosn",
         "172.16.57.74","fire_ggpz_4vov","GGPZ_4VOV_SOU","waiting queue...","4uvr",
         "172.16.48.100","fire_yaroshiv","YAROSHIV_SOU","waiting queue...","vosn",
-
+        "172.16.48.102","fire_talal_z_yaroshiv","TALAL_Z_YAROSHIV_SOU","waiting queue...","vosn",
+        "172.16.57.72","fire_ggpz_gaz","GGPZ_GAZ","waiting queue...","gaz",
 #endif
 
 
@@ -148,6 +153,7 @@ for(;;)
         if (uzels[i].type=="vosn") PollVosn(i);
         if (uzels[i].type=="1uvr2nord") Poll1Uvr2Nord(i);
         if (uzels[i].type=="4uvr") Poll4Uvr(i);
+        if (uzels[i].type=="gaz") PollGaz(i);
 
         if (CheckThreadStop()) return;
     }
@@ -842,6 +848,221 @@ void ThreadPollObjects::Poll4Uvr(int i)
 
 
 }
+//===============================================================================
+void ThreadPollObjects::PollGaz(int i)
+{
+
+    modbus_t *mb;
+    uint16_t tab_reg[100];
+
+
+    uint16_t year;
+    uint16_t month;
+    uint16_t day;
+    uint16_t hour;
+    float plotn_nom;
+    float N_N2;
+    float N_CO2;
+    float D_it_20;
+    float d_su_20;
+    float a0_su;
+    float a1_su;
+    float a2_su;
+    float Ra;
+    float Rn;
+    float Interval;
+
+
+    //средних, делить на cycle_count
+    float d_rTemp_avg;
+    float d_rTisk_avg;
+    float d_rPerepad_avg;
+    float d_rVolFlowSU_avg;
+
+
+    //накопленные
+    float d_rObjemGazuSU;
+    float d_rMassaGazu;  //d_rObjemGazonasZnevodnNafRU_MM_SOU
+
+    float rep_rezerv1;
+    float rep_rezerv2;
+
+
+    uint16_t alarmsCode;
+    uint16_t alarmsTimeSec;
+    uint16_t WhichKoeffSaved;
+
+    uint16_t flagCitect;
+    uint16_t flagWeintek;
+    uint16_t flagServerPRILUKI;
+    uint16_t flagServerGGPZ;
+
+    if (uzels[i].IP_addr.isEmpty())
+    {
+        //QMessageBox::information(this,"Configuration message","Your configuration is incorrect - no IP address!!!",QMessageBox::Ok);
+        emit textchange(i, "ERROR-No IP adress!!!");
+        return;
+    }
+
+    mb = modbus_new_tcp(uzels[i].IP_addr.toStdString().c_str(), 502);
+
+    if (modbus_connect(mb)!=0 )
+    {
+        //QMessageBox::information(this,"Test","Зв'язок з об'єктом відсутній!!!",QMessageBox::Ok);
+        emit textchange(i, "No connection with source");
+    }
+    else //connect OK
+    {
+        modbus_set_slave(mb, 1);
+        // Read 49 registers from the address from 40301
+        int res=modbus_read_registers(mb, 300, 49, tab_reg);
+
+        if (res!=49)
+        {
+            emit textchange(i, "ERROR: modbus read error");
+
+        }
+        else //read OK
+        {
+
+            year=tab_reg[0];
+            month=tab_reg[1];
+            day=tab_reg[2];
+            hour=tab_reg[3];
+            plotn_nom=modbus_get_float(&tab_reg[4]);
+            N_N2=modbus_get_float(&tab_reg[6]);
+            N_CO2=modbus_get_float(&tab_reg[8]);
+            D_it_20=modbus_get_float(&tab_reg[10]);
+            d_su_20=modbus_get_float(&tab_reg[12]);
+            a0_su=modbus_get_float(&tab_reg[14]);
+            a1_su=modbus_get_float(&tab_reg[16]);
+            a2_su=modbus_get_float(&tab_reg[18]);
+
+
+            Ra=modbus_get_float(&tab_reg[20]);
+            Rn=modbus_get_float(&tab_reg[22]);
+            Interval=modbus_get_float(&tab_reg[24]);
+            //средних, делить на cycle_count
+            d_rTemp_avg=modbus_get_float(&tab_reg[26]);
+            d_rTisk_avg=modbus_get_float(&tab_reg[28]);
+            d_rPerepad_avg=modbus_get_float(&tab_reg[30]);
+            d_rVolFlowSU_avg=modbus_get_float(&tab_reg[32]);
+            //накопленные
+            d_rObjemGazuSU=modbus_get_float(&tab_reg[34]);
+            d_rMassaGazu=modbus_get_float(&tab_reg[36]);
+            //rep_rezerv1=modbus_get_float(&tab_reg[38]);
+            //rep_rezerv2=modbus_get_float(&tab_reg[40]);
+
+            alarmsCode=tab_reg[42];
+            alarmsTimeSec=tab_reg[43];
+            WhichKoeffSaved=tab_reg[44];
+
+            flagCitect=tab_reg[45];
+            flagWeintek=tab_reg[46];
+            flagServerPRILUKI=tab_reg[47];  //Priluki server flag GAZ defined 47  (40348)
+            flagServerGGPZ=tab_reg[48];     //ggpz GAZ defined 48                  (40349)
+
+
+            if (tab_reg[SERVERFLAGGAZ]==1)
+            {
+
+               //QString tmp;
+
+               //tmp.sprintf("%i %i %i %i\n%.2f %.2f %.2f %.2f %.2f %.2f %.2f\n%i %i %i",year,month,day,hour,
+        //GustPlastVod,GustSepNaf,GustGazuSU,Gazovmist,ObjomVilnGazu,DiametrTrubopr,KoeffZ,flagCitect,flagWeintek,flagServer);
+                //QMessageBox::information(this,"Test",tmp,QMessageBox::Ok);
+        // reset flag flagServer
+
+
+                    // insert to db
+                    QString connectionName=GetNextName();
+
+                        {  // start of the block where the db object lives
+
+                            QSqlDatabase db = QSqlDatabase::addDatabase("QODBC",connectionName);
+                                  db.setDatabaseName(uzels[i].OdbcName);
+                                  db.setUserName("sysdba");//user);
+                                  db.setPassword("784523");//pass);
+                            if (db.open())
+                            {
+
+                                QSqlQuery sqlQuery(db);
+                                QString query;
+
+                                tab_reg[SERVERFLAGGAZ]=0;
+                                if (modbus_write_registers(mb, 300+SERVERFLAGGAZ, 1, &tab_reg[SERVERFLAGGAZ])==1)  //flag reset OK
+                                {
+
+                                    query.sprintf(QString("INSERT INTO " + uzels[i].TableName + "(" +
+                                                  "DT, TEMP, TISK, PEREPAD, VOLFLOWSU, " +
+                                                  "PLOTN_NOM, N_N2, N_CO2, D_IT_20, D_SU_20, A0_SU, A1_SU, A2_SU, " +
+                                                  "RA, RN, INTERVAL, OBJEMGAZUSU, MASSAGAZU, "+
+                                                  "ALARMSCODE , ALARMSTIMESEC, WHICHKOEFFSAVED) "
+                                                  "VALUES ("+
+                                                  "'%i.%i.%i %i:00:00', %f, %f, %f, %f, "+
+                                                  "%f, %f, %f, %f, %f, %f, %f, %f, " +
+                                                  "%f, %f, %f, %f, %f, " +
+                                                  "%i, %i, %i)").toStdString().c_str(),
+                                                  day,month,year,hour,d_rTemp_avg,d_rTisk_avg,d_rPerepad_avg,d_rVolFlowSU_avg,
+                                                  plotn_nom,N_N2,N_CO2,D_it_20,d_su_20,a0_su,a1_su,a2_su,
+                                                  Ra,Rn,Interval,d_rObjemGazuSU,d_rMassaGazu,
+                                                  alarmsCode, alarmsTimeSec, WhichKoeffSaved
+                                                  );
+
+                                                  //  emit insert(query);
+
+                                    sqlQuery.exec(query);
+
+                                    if (sqlQuery.lastError().isValid())
+                                    {
+                                        //QMessageBox::critical(NULL, QObject::tr("Database Error"), sqlQuery.lastError().text());
+                                        emit textchange(i,"ERROR: Database error on INSERT");
+                                    }
+                                    else
+                                    {
+                                        //QMessageBox::information(NULL, tr("Информация"), "Запись удалена успешно.");
+                                        emit textchange(i,"INSERT OK");
+                                    }
+
+                                }
+                                else
+                                {
+                                    emit textchange(i, "ERROR: cannot reset flag!!!");
+                                }
+
+
+                            }
+                            else
+                            {
+                                //QMessageBox::critical(NULL, QObject::tr("Database Error"), db.lastError().text());
+                                emit insert(db.lastError().databaseText());
+                                emit insert(db.lastError().driverText());
+                                emit textchange(i,"ERROR: Database not open");
+                            }
+
+                            db.close();
+                        } // end of the block where the db object lives, it will be destroyed here
+
+                        QSqlDatabase::removeDatabase(connectionName);
+
+                    //insert to DB end
+
+
+
+
+            }
+            else
+            {
+                emit textchange(i, "No new data");
+            }
+        }
+    }
+    modbus_close(mb);
+    modbus_free(mb);
+
+
+
+}
 //================================================================================
 /*
 CREATE TABLE LELAKI_SOU
@@ -929,6 +1150,39 @@ UVR3_OBJEM FLOAT,
 UVR4_VOLFLOW FLOAT,
 UVR4_VOLTOTAL FLOAT,
 UVR4_OBJEM FLOAT,
+ALARMSCODE INTEGER,
+ALARMSTIMESEC INTEGER,
+WHICHKOEFFSAVED INTEGER,
+PRIMARY KEY(ID)
+);
+
++autoincrement on id
+
+//======================================================================
+
+///GAZ
+///
+CREATE TABLE GGPZ_GAZ
+(
+ID INTEGER,
+DT TIMESTAMP,
+TEMP FLOAT,
+TISK FLOAT,
+PEREPAD FLOAT,
+VOLFLOWSU FLOAT,
+PLOTN_NOM FLOAT,
+N_N2 FLOAT,
+N_CO2 FLOAT,
+D_IT_20 FLOAT,
+D_SU_20 FLOAT,
+A0_SU FLOAT,
+A1_SU FLOAT,
+A2_SU FLOAT,
+RA FLOAT,
+RN FLOAT,
+INTERVAL FLOAT,
+OBJEMGAZUSU FLOAT,
+MASSAGAZU FLOAT,
 ALARMSCODE INTEGER,
 ALARMSTIMESEC INTEGER,
 WHICHKOEFFSAVED INTEGER,
