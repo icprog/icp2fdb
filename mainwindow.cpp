@@ -12,22 +12,28 @@
 
 #include "./src_libmodbus/modbus.h"
 
-#define PRILUKI
-//#define GGPZ
+//#define PRILUKI
+#define GGPZ
 
 
 #ifdef PRILUKI
 #define SERVERFLAG 83
 #define SERVERFLAG1UVR2NORD 23
+#define SERVERFLAG1UVR2NORD1MM 43
 #define SERVERFLAG4UVR 33
 #define SERVERFLAGGAZ 47
+#define SERVERFLAG_AGZSUMALODIV_1H 47
+#define SERVERFLAG_AGZSUMALODIV_OTK 33
 #endif
 
 #ifdef GGPZ
 #define SERVERFLAG 84
 #define SERVERFLAG1UVR2NORD 24
+#define SERVERFLAG1UVR2NORD1MM 44
 #define SERVERFLAG4UVR 34
 #define SERVERFLAGGAZ 48
+#define SERVERFLAG_AGZSUMALODIV_1H 48
+#define SERVERFLAG_AGZSUMALODIV_OTK 34
 #endif
 
 
@@ -38,44 +44,48 @@ struct uzel
     QString OdbcName;
     QString TableName;
     QString text;
-    QString type;  //"vosn","1uvr2nord","4uvr","gaz"
+    QString type;  //"vosn","1uvr2nord","1uvr2nord1mm","4uvr","gaz", "agzsu_malodiv_1h", "agzsu_malodiv_otk"
 } uzels[]=
 {
 #ifdef PRILUKI
 
     "172.16.223.2","fire_lelaki","LELAKI_SOU","waiting queue...","vosn",
 
-    "172.16.57.69","fire_ggpz_gned","GGPZ_GNED_SOU","waiting queue...","vosn",
-    "172.16.57.70","fire_ggpz_lelaki_vhod","GGPZ_LELAKI_VHOD_SOU","waiting queue...","vosn",
+    "172.16.223.18","fire_ggpz_gned","GGPZ_GNED_SOU","waiting queue...","vosn",
+    "172.16.223.19","fire_ggpz_lelaki_vhod","GGPZ_LELAKI_VHOD_SOU","waiting queue...","vosn",
 //    "172.16.57.72","fire_ggpz_lelaki_vihod","GGPZ_LELAKI_VIHOD_SOU","waiting queue...","vosn",
 
     "172.16.57.75","fire_ggpz_z_os","GGPZ_Z_OS_SOU","waiting queue...","vosn",
     "172.16.57.76","fire_ggpz_z_ups","GGPZ_Z_UPS_SOU","waiting queue...","vosn",
-    "172.16.57.78","fire_ggpz_z_ksu","GGPZ_Z_KSU_SOU","waiting queue...","1uvr2nord",
-    "172.16.57.20","fire_gzu1_gned","GZU1_GNED_SOU","waiting queue...","vosn",
+    "172.16.57.78","fire_ggpz_z_ksu","GGPZ_Z_KSU_SOU","waiting queue...","1uvr2nord1mm",
+    "172.16.223.34","fire_gzu1_gned","GZU1_GNED_SOU","waiting queue...","vosn",
     "172.16.57.74","fire_ggpz_4vov","GGPZ_4VOV_SOU","waiting queue...","4uvr",
     "172.16.48.100","fire_yaroshiv","YAROSHIV_SOU","waiting queue...","vosn",
-    "172.16.48.102","fire_talal_z_yaroshiv","TALAL_Z_YAROSHIV_SOU","waiting queue...","vosn",
+    "172.16.223.42","fire_talal_z_yaroshiv","TALAL_Z_YAROSHIV_SOU","waiting queue...","vosn",
     "172.16.57.72","fire_ggpz_gaz","GGPZ_GAZ","waiting queue...","gaz",
-
+    "172.16.223.50","fire_agzsu_malodiv","AGZSU_MALODIV_1H","waiting queue...","agzsu_malodiv_1h",
+    "172.16.223.50","fire_agzsu_malodiv","AGZSU_MALODIV_OTK","waiting queue...","agzsu_malodiv_otk",
 #endif
 
 #ifdef GGPZ
 
         "172.16.223.2","fire_lelaki","LELAKI_SOU","waiting queue...","vosn",
 
-        "172.16.57.69","fire_ggpz_gned","GGPZ_GNED_SOU","waiting queue...","vosn",
-        "172.16.57.70","fire_ggpz_lelaki_vhod","GGPZ_LELAKI_VHOD_SOU","waiting queue...","vosn",
+        "172.16.223.18","fire_ggpz_gned","GGPZ_GNED_SOU","waiting queue...","vosn",
+        "172.16.223.19","fire_ggpz_lelaki_vhod","GGPZ_LELAKI_VHOD_SOU","waiting queue...","vosn",
     //    "172.16.57.72","fire_ggpz_lelaki_vihod","GGPZ_LELAKI_VIHOD_SOU","waiting queue...","vosn",
 
         "172.16.57.75","fire_ggpz_z_os","GGPZ_Z_OS_SOU","waiting queue...","vosn",
         "172.16.57.76","fire_ggpz_z_ups","GGPZ_Z_UPS_SOU","waiting queue...","vosn",
-        "172.16.57.78","fire_ggpz_z_ksu","GGPZ_Z_KSU_SOU","waiting queue...","1uvr2nord",
-        "172.16.57.20","fire_gzu1_gned","GZU1_GNED_SOU","waiting queue...","vosn",
+        "172.16.57.78","fire_ggpz_z_ksu","GGPZ_Z_KSU_SOU","waiting queue...","1uvr2nord1mm",
+        "172.16.223.34","fire_gzu1_gned","GZU1_GNED_SOU","waiting queue...","vosn",
         "172.16.57.74","fire_ggpz_4vov","GGPZ_4VOV_SOU","waiting queue...","4uvr",
         "172.16.48.100","fire_yaroshiv","YAROSHIV_SOU","waiting queue...","vosn",
-        "172.16.48.102","fire_talal_z_yaroshiv","TALAL_Z_YAROSHIV_SOU","waiting queue...","vosn",
+        "172.16.223.42","fire_talal_z_yaroshiv","TALAL_Z_YAROSHIV_SOU","waiting queue...","vosn",
         "172.16.57.72","fire_ggpz_gaz","GGPZ_GAZ","waiting queue...","gaz",
+        "172.16.223.50","fire_agzsu_malodiv","AGZSU_MALODIV_1H","waiting queue...","agzsu_malodiv_1h",
+        "172.16.223.50","fire_agzsu_malodiv","AGZSU_MALODIV_OTK","waiting queue...","agzsu_malodiv_otk",
+
 #endif
 
 
@@ -152,8 +162,14 @@ for(;;)
 
         if (uzels[i].type=="vosn") PollVosn(i);
         if (uzels[i].type=="1uvr2nord") Poll1Uvr2Nord(i);
+        if (uzels[i].type=="1uvr2nord1mm") Poll1Uvr2Nord1MM(i);
         if (uzels[i].type=="4uvr") Poll4Uvr(i);
         if (uzels[i].type=="gaz") PollGaz(i);
+
+        if (uzels[i].type=="agzsu_malodiv_1h") PollAgzsuMalodiv_1h(i);
+        if (uzels[i].type=="agzsu_malodiv_otk") PollAgzsuMalodiv_otk(i);
+
+
 
         if (CheckThreadStop()) return;
     }
@@ -640,6 +656,215 @@ void ThreadPollObjects::Poll1Uvr2Nord(int i)
 
 }
 //===============================================================================
+void ThreadPollObjects::Poll1Uvr2Nord1MM(int i)
+{
+
+    modbus_t *mb;
+    uint16_t tab_reg[100];
+
+
+    uint16_t year;
+    uint16_t month;
+    uint16_t day;
+    uint16_t hour;
+    //uvr
+    float m_rUvrVolFlow_avg;
+    float m_rUvrVolTotal;
+    float d_rUvrObjem;
+    //NORD 1
+    float d_rNORD1_VolFlow_avg;
+    float d_rNORD1_Objem;
+    float d_rNORD1_Dens_avg;
+    float d_rNORD1_MassFlow_avg;
+    float d_rNORD1_Massa;
+    //NORD 2
+    float d_rNORD2_VolFlow_avg;
+    float d_rNORD2_Objem;
+    //MM
+    //masstotal
+    float mass_total;
+    float vol_total;
+    float d_rMassFlow_avg;
+    float d_rVolFlow_avg;
+    float d_rDens_avg;
+    float d_rObjemRidRU_MM;
+    float d_rMassaRid_MM;
+
+    uint16_t alarmsCode;
+    uint16_t alarmsTimeSec;
+    uint16_t WhichKoeffSaved;
+
+    uint16_t flagCitect;
+    uint16_t flagWeintek;
+    uint16_t flagServerPRILUKI;
+    uint16_t flagServerGGPZ;
+
+    if (uzels[i].IP_addr.isEmpty())
+    {
+        //QMessageBox::information(this,"Configuration message","Your configuration is incorrect - no IP address!!!",QMessageBox::Ok);
+        emit textchange(i, "ERROR-No IP adress!!!");
+        return;
+    }
+
+    mb = modbus_new_tcp(uzels[i].IP_addr.toStdString().c_str(), 502);
+
+    if (modbus_connect(mb)!=0 )
+    {
+        //QMessageBox::information(this,"Test","Зв'язок з об'єктом відсутній!!!",QMessageBox::Ok);
+        emit textchange(i, "No connection with source");
+    }
+    else //connect OK
+    {
+        modbus_set_slave(mb, 1);
+        // Read 45 registers from the address from 40301
+        int res=modbus_read_registers(mb, 300, 45, tab_reg);
+
+        if (res!=45)
+        {
+            emit textchange(i, "ERROR: modbus read error");
+
+        }
+        else //read OK
+        {
+
+            year=tab_reg[0];
+            month=tab_reg[1];
+            day=tab_reg[2];
+            hour=tab_reg[3];
+
+            //uvr
+            m_rUvrVolFlow_avg=modbus_get_float(&tab_reg[4]);
+            m_rUvrVolTotal=modbus_get_float(&tab_reg[6]);
+            d_rUvrObjem=modbus_get_float(&tab_reg[8]);
+            //NORD 1
+            d_rNORD1_VolFlow_avg=modbus_get_float(&tab_reg[10]);
+            d_rNORD1_Objem=modbus_get_float(&tab_reg[12]);
+            d_rNORD1_Dens_avg=modbus_get_float(&tab_reg[14]);
+            d_rNORD1_MassFlow_avg=modbus_get_float(&tab_reg[16]);
+            d_rNORD1_Massa=modbus_get_float(&tab_reg[18]);
+            //NORD 2
+            d_rNORD2_VolFlow_avg=modbus_get_float(&tab_reg[20]);
+            d_rNORD2_Objem=modbus_get_float(&tab_reg[22]);
+            //MM
+            mass_total=modbus_get_float(&tab_reg[24]);
+            vol_total=modbus_get_float(&tab_reg[26]);
+            d_rMassFlow_avg=modbus_get_float(&tab_reg[28]);
+            d_rVolFlow_avg=modbus_get_float(&tab_reg[30]);
+            d_rDens_avg=modbus_get_float(&tab_reg[32]);
+            d_rObjemRidRU_MM=modbus_get_float(&tab_reg[34]);
+            d_rMassaRid_MM=modbus_get_float(&tab_reg[36]);
+
+
+
+            alarmsCode=tab_reg[38];
+            alarmsTimeSec=tab_reg[39];
+            WhichKoeffSaved=tab_reg[40];
+
+            flagCitect=tab_reg[41];
+            flagWeintek=tab_reg[42];
+            flagServerPRILUKI=tab_reg[43];  //Priluki server flag defined 83  (40384)
+            flagServerGGPZ=tab_reg[44];     //ggpz defined 84                  (40385)
+
+
+            if (tab_reg[SERVERFLAG1UVR2NORD1MM]==1)
+            {
+
+               //QString tmp;
+
+               //tmp.sprintf("%i %i %i %i\n%.2f %.2f %.2f %.2f %.2f %.2f %.2f\n%i %i %i",year,month,day,hour,
+        //GustPlastVod,GustSepNaf,GustGazuSU,Gazovmist,ObjomVilnGazu,DiametrTrubopr,KoeffZ,flagCitect,flagWeintek,flagServer);
+                //QMessageBox::information(this,"Test",tmp,QMessageBox::Ok);
+        // reset flag flagServer
+
+
+                    // insert to db
+                    QString connectionName=GetNextName();
+
+                        {  // start of the block where the db object lives
+
+                            QSqlDatabase db = QSqlDatabase::addDatabase("QODBC",connectionName);
+                                  db.setDatabaseName(uzels[i].OdbcName);
+                                  db.setUserName("sysdba");//user);
+                                  db.setPassword("784523");//pass);
+                            if (db.open())
+                            {
+
+                                QSqlQuery sqlQuery(db);
+                                QString query;
+
+                                tab_reg[SERVERFLAG1UVR2NORD1MM]=0;
+                                if (modbus_write_registers(mb, 300+SERVERFLAG1UVR2NORD1MM, 1, &tab_reg[SERVERFLAG1UVR2NORD1MM])==1)  //flag reset OK
+                                {
+
+                                    query.sprintf(QString("INSERT INTO " + uzels[i].TableName + "(" +
+                                                  "DT, UVRVOLFLOW, UVRVOLTOTAL, UVROBJEM, " +
+                                                  "NORD1_VOLFLOW, NORD1_OBJEM, NORD1_DENS, NORD1_MASSFLOW, NORD1_MASSA, NORD2_VOLFLOW, NORD2_OBJEM, "+
+                                                  "MM_MASSTOTAL, MM_VOLTOTAL, MM_MASSFLOW, MM_VOLFLOW, MM_DENS, MM_OBJEMRIDRU, MM_MASSARID, "
+                                                  "ALARMSCODE , ALARMSTIMESEC, WHICHKOEFFSAVED) "
+                                                  "VALUES ("+
+                                                  "'%i.%i.%i %i:00:00', %f, %f, %f, "+
+                                                  "%f, %f, %f, %f, %f, %f, %f," +
+                                                  "%f, %f, %f, %f, %f, %f, %f, " +
+                                                  "%i, %i, %i)").toStdString().c_str(),
+                                                  day,month,year,hour,m_rUvrVolFlow_avg,m_rUvrVolTotal,d_rUvrObjem,
+                                                  d_rNORD1_VolFlow_avg,d_rNORD1_Objem,d_rNORD1_Dens_avg,d_rNORD1_MassFlow_avg,d_rNORD1_Massa, d_rNORD2_VolFlow_avg,d_rNORD2_Objem,
+                                                  mass_total,vol_total,d_rMassFlow_avg,d_rVolFlow_avg,d_rDens_avg,d_rObjemRidRU_MM,d_rMassaRid_MM,
+                                                  alarmsCode, alarmsTimeSec, WhichKoeffSaved
+                                                  );
+
+                                                  //  emit insert(query);
+
+                                    sqlQuery.exec(query);
+
+                                    if (sqlQuery.lastError().isValid())
+                                    {
+                                        //QMessageBox::critical(NULL, QObject::tr("Database Error"), sqlQuery.lastError().text());
+                                        emit textchange(i,"ERROR: Database error on INSERT");
+                                    }
+                                    else
+                                    {
+                                        //QMessageBox::information(NULL, tr("Информация"), "Запись удалена успешно.");
+                                        emit textchange(i,"INSERT OK");
+                                    }
+
+                                }
+                                else
+                                {
+                                    emit textchange(i, "ERROR: cannot reset flag!!!");
+                                }
+
+
+                            }
+                            else
+                            {
+                                //QMessageBox::critical(NULL, QObject::tr("Database Error"), db.lastError().text());
+                                emit insert(db.lastError().databaseText());
+                                emit insert(db.lastError().driverText());
+                                emit textchange(i,"ERROR: Database not open");
+                            }
+
+                            db.close();
+                        } // end of the block where the db object lives, it will be destroyed here
+
+                        QSqlDatabase::removeDatabase(connectionName);
+
+                    //insert to DB end
+
+
+
+
+            }
+            else
+            {
+                emit textchange(i, "No new data");
+            }
+        }
+    }
+    modbus_close(mb);
+    modbus_free(mb);
+
+}
+//===============================================================================
 void ThreadPollObjects::Poll4Uvr(int i)
 {
     modbus_t *mb;
@@ -1064,6 +1289,405 @@ void ThreadPollObjects::PollGaz(int i)
 
 }
 //================================================================================
+
+void ThreadPollObjects::PollAgzsuMalodiv_1h(int i)
+{
+
+    modbus_t *mb;
+    uint16_t tab_reg[100];
+
+
+    uint16_t year;
+    uint16_t month;
+    uint16_t day;
+    uint16_t hour;
+    float RO_V_1H;
+    float RN_V_1H;
+    float LN_E11_1H;
+    float LN_E12_1H;
+    float LR_RVS_1H;
+    float LV_RVS_1H;
+    float LV_NGS_1H;
+    float LN_NGS_1H;
+
+    float rep_rezerv1;
+    float rep_rezerv2;
+    float rep_rezerv3;
+    float rep_rezerv4;
+
+    float VR_RVS_1H;
+    float VV_RVS_1H;
+    float VN_RVS_1H;
+    float FN_UVR_1H;
+    float VN_UVR_T;
+    float VN_UVR_1H;
+    float MN_UVR_1H;
+
+    uint16_t flagCitect;
+    uint16_t flagWeintek;
+    uint16_t flagServerPRILUKI;
+    uint16_t flagServerGGPZ;
+
+    if (uzels[i].IP_addr.isEmpty())
+    {
+        //QMessageBox::information(this,"Configuration message","Your configuration is incorrect - no IP address!!!",QMessageBox::Ok);
+        emit textchange(i, "ERROR-No IP adress!!!");
+        return;
+    }
+
+    mb = modbus_new_tcp(uzels[i].IP_addr.toStdString().c_str(), 502);
+
+    if (modbus_connect(mb)!=0 )
+    {
+        //QMessageBox::information(this,"Test","Зв'язок з об'єктом відсутній!!!",QMessageBox::Ok);
+        emit textchange(i, "No connection with source");
+    }
+    else //connect OK
+    {
+        modbus_set_slave(mb, 1);
+        // Read 49 registers from the address from 40301
+        int res=modbus_read_registers(mb, 300, 49, tab_reg);
+
+        if (res!=49)
+        {
+            emit textchange(i, "ERROR: modbus read error");
+
+        }
+        else //read OK
+        {
+
+            year=tab_reg[0];
+            month=tab_reg[1];
+            day=tab_reg[2];
+            hour=tab_reg[3];
+
+            RO_V_1H=modbus_get_float(&tab_reg[4]);
+            RN_V_1H=modbus_get_float(&tab_reg[6]);
+            LN_E11_1H=modbus_get_float(&tab_reg[8]);
+            LN_E12_1H=modbus_get_float(&tab_reg[10]);
+            LR_RVS_1H=modbus_get_float(&tab_reg[12]);
+            LV_RVS_1H=modbus_get_float(&tab_reg[14]);
+            LV_NGS_1H=modbus_get_float(&tab_reg[16]);
+            LN_NGS_1H=modbus_get_float(&tab_reg[18]);
+
+            rep_rezerv1=modbus_get_float(&tab_reg[20]);
+            rep_rezerv2=modbus_get_float(&tab_reg[22]);
+            rep_rezerv3=modbus_get_float(&tab_reg[24]);
+            rep_rezerv4=modbus_get_float(&tab_reg[26]);
+
+            VR_RVS_1H=modbus_get_float(&tab_reg[28]);
+            VV_RVS_1H=modbus_get_float(&tab_reg[30]);
+            VN_RVS_1H=modbus_get_float(&tab_reg[32]);
+            FN_UVR_1H=modbus_get_float(&tab_reg[34]);
+            VN_UVR_T=modbus_get_float(&tab_reg[36]);
+            VN_UVR_1H=modbus_get_float(&tab_reg[38]);
+            MN_UVR_1H=modbus_get_float(&tab_reg[40]);
+
+
+
+
+            flagCitect=tab_reg[45];
+            flagWeintek=tab_reg[46];
+            flagServerPRILUKI=tab_reg[47];  //Priluki server flag agzsu_malodiv 1h defined 47  (40348)
+            flagServerGGPZ=tab_reg[48];     //ggpz GAZ defined 48                  (40349)
+
+
+            if (tab_reg[SERVERFLAG_AGZSUMALODIV_1H]==1)
+            {
+
+               //QString tmp;
+
+               //tmp.sprintf("%i %i %i %i\n%.2f %.2f %.2f %.2f %.2f %.2f %.2f\n%i %i %i",year,month,day,hour,
+        //GustPlastVod,GustSepNaf,GustGazuSU,Gazovmist,ObjomVilnGazu,DiametrTrubopr,KoeffZ,flagCitect,flagWeintek,flagServer);
+                //QMessageBox::information(this,"Test",tmp,QMessageBox::Ok);
+        // reset flag flagServer
+
+
+                    // insert to db
+                    QString connectionName=GetNextName();
+
+                        {  // start of the block where the db object lives
+
+                            QSqlDatabase db = QSqlDatabase::addDatabase("QODBC",connectionName);
+                                  db.setDatabaseName(uzels[i].OdbcName);
+                                  db.setUserName("sysdba");//user);
+                                  db.setPassword("784523");//pass);
+                            if (db.open())
+                            {
+
+                                QSqlQuery sqlQuery(db);
+                                QString query;
+
+                                tab_reg[SERVERFLAG_AGZSUMALODIV_1H]=0;
+                                if (modbus_write_registers(mb, 300+SERVERFLAG_AGZSUMALODIV_1H, 1, &tab_reg[SERVERFLAG_AGZSUMALODIV_1H])==1)  //flag reset OK
+                                {
+
+                                    query.sprintf(QString("INSERT INTO " + uzels[i].TableName + "(" +
+                                                  "DT, RO_V_1H, RN_V_1H, LN_E11_1H, LN_E12_1H, LR_RVS_1H, LV_RVS_1H, LV_NGS_1H, "+
+                                                  "LN_NGS_1H, VR_RVS_1H, VV_RVS_1H, VN_RVS_1H, FN_UVR_1H, VN_UVR_T, VN_UVR_1H, MN_UVR_1H) "
+                                                  "VALUES ("+
+                                                  "'%i.%i.%i %i:00:00', %f, %f, %f, %f, %f, %f, %f, "+
+                                                  "%f, %f, %f, %f, %f, %f, %f, %f)").toStdString().c_str(),
+                                                  day,month,year,hour,RO_V_1H, RN_V_1H, LN_E11_1H, LN_E12_1H, LR_RVS_1H, LV_RVS_1H, LV_NGS_1H,
+                                                  LN_NGS_1H, VR_RVS_1H, VV_RVS_1H, VN_RVS_1H, FN_UVR_1H, VN_UVR_T, VN_UVR_1H, MN_UVR_1H
+                                                  );
+
+                                                  //  emit insert(query);
+
+                                    sqlQuery.exec(query);
+
+                                    if (sqlQuery.lastError().isValid())
+                                    {
+                                        //QMessageBox::critical(NULL, QObject::tr("Database Error"), sqlQuery.lastError().text());
+                                        emit textchange(i,"ERROR: Database error on INSERT");
+                                    }
+                                    else
+                                    {
+                                        //QMessageBox::information(NULL, tr("Информация"), "Запись удалена успешно.");
+                                        emit textchange(i,"INSERT OK");
+                                    }
+
+                                }
+                                else
+                                {
+                                    emit textchange(i, "ERROR: cannot reset flag!!!");
+                                }
+
+
+                            }
+                            else
+                            {
+                                //QMessageBox::critical(NULL, QObject::tr("Database Error"), db.lastError().text());
+                                emit insert(db.lastError().databaseText());
+                                emit insert(db.lastError().driverText());
+                                emit textchange(i,"ERROR: Database not open");
+                            }
+
+                            db.close();
+                        } // end of the block where the db object lives, it will be destroyed here
+
+                        QSqlDatabase::removeDatabase(connectionName);
+
+                    //insert to DB end
+
+
+
+
+            }
+            else
+            {
+                emit textchange(i, "No new data");
+            }
+        }
+    }
+    modbus_close(mb);
+    modbus_free(mb);
+
+
+
+}
+//================================================================================
+void ThreadPollObjects::PollAgzsuMalodiv_otk(int i)
+{
+
+    modbus_t *mb;
+    uint16_t tab_reg[100];
+
+
+    uint16_t year_start;
+    uint16_t month_start;
+    uint16_t day_start;
+    uint16_t hour_start;
+    uint16_t minute_start;
+    uint16_t second_start;
+
+    uint16_t year_finish;
+    uint16_t month_finish;
+    uint16_t day_finish;
+    uint16_t hour_finish;
+    uint16_t minute_finish;
+    uint16_t second_finish;
+
+
+    float VN_UVR_START;
+    float VN_UVR_FINISH;
+    float RO_N;
+    float DELTA_VOL;
+    float DELTA_MASS;
+
+
+    uint16_t alarmsCode;
+    uint16_t alarmsTimeSec;
+    uint16_t WhichKoeffSaved;
+
+    uint16_t flagCitect;
+    uint16_t flagWeintek;
+    uint16_t flagServerPRILUKI;
+    uint16_t flagServerGGPZ;
+
+    if (uzels[i].IP_addr.isEmpty())
+    {
+        //QMessageBox::information(this,"Configuration message","Your configuration is incorrect - no IP address!!!",QMessageBox::Ok);
+        emit textchange(i, "ERROR-No IP adress!!!");
+        return;
+    }
+
+    mb = modbus_new_tcp(uzels[i].IP_addr.toStdString().c_str(), 502);
+
+    if (modbus_connect(mb)!=0 )
+    {
+        //QMessageBox::information(this,"Test","Зв'язок з об'єктом відсутній!!!",QMessageBox::Ok);
+        emit textchange(i, "No connection with source");
+    }
+    else //connect OK
+    {
+        modbus_set_slave(mb, 1);
+        // Read 35 registers from the address from 40351
+        int res=modbus_read_registers(mb, 350, 35, tab_reg);
+
+        if (res!=35)
+        {
+            emit textchange(i, "ERROR: modbus read error");
+
+        }
+        else //read OK
+        {
+
+            year_start=tab_reg[0];
+            month_start=tab_reg[1];
+            day_start=tab_reg[2];
+            hour_start=tab_reg[3];
+            minute_start=tab_reg[4];
+            second_start=tab_reg[5];
+            VN_UVR_START=modbus_get_float(&tab_reg[6]);
+
+            year_finish=tab_reg[8];
+            month_finish=tab_reg[9];
+            day_finish=tab_reg[10];
+            hour_finish=tab_reg[11];
+            minute_finish=tab_reg[12];
+            second_finish=tab_reg[13];
+            VN_UVR_FINISH=modbus_get_float(&tab_reg[14]);
+
+            RO_N=modbus_get_float(&tab_reg[16]);
+            DELTA_VOL=modbus_get_float(&tab_reg[18]);
+            DELTA_MASS=modbus_get_float(&tab_reg[20]);
+
+
+            //rezerv1 =modbus_get_float(&tab_reg[74]); 40375
+            //rezerv2 =modbus_get_float(&tab_reg[76]); 40377
+
+
+            alarmsCode=tab_reg[22];
+            alarmsTimeSec=tab_reg[23];
+            WhichKoeffSaved=tab_reg[24];
+
+            //flagCitect=tab_reg[81];
+            flagWeintek=tab_reg[32];
+            flagServerPRILUKI=tab_reg[33];  //Priluki server flag defined 83  (40384)
+            flagServerGGPZ=tab_reg[34];     //ggpz defined 84                  (40385)
+
+
+            if (tab_reg[SERVERFLAG_AGZSUMALODIV_OTK]==1)
+            {
+
+               //QString tmp;
+
+               //tmp.sprintf("%i %i %i %i\n%.2f %.2f %.2f %.2f %.2f %.2f %.2f\n%i %i %i",year,month,day,hour,
+        //GustPlastVod,GustSepNaf,GustGazuSU,Gazovmist,ObjomVilnGazu,DiametrTrubopr,KoeffZ,flagCitect,flagWeintek,flagServer);
+                //QMessageBox::information(this,"Test",tmp,QMessageBox::Ok);
+        // reset flag flagServer
+
+
+                    // insert to db
+                    QString connectionName=GetNextName();
+
+                        {  // start of the block where the db object lives
+
+                            QSqlDatabase db = QSqlDatabase::addDatabase("QODBC",connectionName);
+                                  db.setDatabaseName(uzels[i].OdbcName);
+                                  db.setUserName("sysdba");//user);
+                                  db.setPassword("784523");//pass);
+                            if (db.open())
+                            {
+
+                                QSqlQuery sqlQuery(db);
+                                QString query;
+
+                                tab_reg[SERVERFLAG_AGZSUMALODIV_OTK]=0;
+                                if (modbus_write_registers(mb, 350+SERVERFLAG_AGZSUMALODIV_OTK, 1, &tab_reg[SERVERFLAG_AGZSUMALODIV_OTK])==1)  //flag reset OK
+                                {
+
+                                    query.sprintf(QString("INSERT INTO " + uzels[i].TableName + "(" +
+                                                  "DT_START, DT_FINISH, VN_UVR_START, VN_UVR_FINISH, RO_N, DELTA_VOL, DELTA_MASS, "
+                                                  "ALARMSCODE , ALARMSTIMESEC, WHICHKOEFFSAVED) "
+                                                  "VALUES ("+
+                                                  "'%i.%i.%i %i:%i:%i',"+
+                                                  "'%i.%i.%i %i:%i:%i',"+
+                                                  "%f, %f, %f, %f, %f, "+
+                                                  "%i, %i, %i)").toStdString().c_str(),
+                                                  day_start,month_start,year_start,hour_start,minute_start,second_start,
+                                                  day_finish,month_finish,year_finish,hour_finish,minute_finish,second_finish,
+                                                  VN_UVR_START,VN_UVR_FINISH,RO_N,DELTA_VOL,DELTA_MASS,
+                                                  alarmsCode, alarmsTimeSec, WhichKoeffSaved
+                                                  );
+
+                                                  //  emit insert(query);
+
+                                    sqlQuery.exec(query);
+
+                                    if (sqlQuery.lastError().isValid())
+                                    {
+                                        //QMessageBox::critical(NULL, QObject::tr("Database Error"), sqlQuery.lastError().text());
+                                        emit textchange(i,"ERROR: Database error on INSERT");
+                                    }
+                                    else
+                                    {
+                                        //QMessageBox::information(NULL, tr("Информация"), "Запись удалена успешно.");
+                                        emit textchange(i,"INSERT OK");
+                                    }
+
+                                }
+                                else
+                                {
+                                    emit textchange(i, "ERROR: cannot reset flag!!!");
+                                }
+
+
+                            }
+                            else
+                            {
+                                //QMessageBox::critical(NULL, QObject::tr("Database Error"), db.lastError().text());
+                                emit insert(db.lastError().databaseText());
+                                emit insert(db.lastError().driverText());
+                                emit textchange(i,"ERROR: Database not open");
+                            }
+
+                            db.close();
+                        } // end of the block where the db object lives, it will be destroyed here
+
+                        QSqlDatabase::removeDatabase(connectionName);
+
+                    //insert to DB end
+
+
+
+
+            }
+            else
+            {
+                emit textchange(i, "No new data");
+            }
+        }
+    }
+    modbus_close(mb);
+    modbus_free(mb);
+
+
+
+}
+//===============================================================================
+
 /*
 CREATE TABLE LELAKI_SOU
 (
@@ -1192,5 +1816,47 @@ PRIMARY KEY(ID)
 +autoincrement on id
 
 
+
+CREATE TABLE AGZSU_MALODIV_1H
+(
+ID INTEGER,
+DT TIMESTAMP,
+RO_V_1H FLOAT,
+RN_V_1H FLOAT,
+LN_E11_1H FLOAT,
+LN_E12_1H FLOAT,
+LR_RVS_1H FLOAT,
+LV_RVS_1H FLOAT,
+LV_NGS_1H FLOAT,
+LN_NGS_1H FLOAT,
+VR_RVS_1H FLOAT,
+VV_RVS_1H FLOAT,
+VN_RVS_1H FLOAT,
+FN_UVR_1H FLOAT,
+VN_UVR_T FLOAT,
+VN_UVR_1H FLOAT,
+MN_UVR_1H FLOAT,
+PRIMARY KEY(ID)
+);
+
++autoincrement on id
+
+CREATE TABLE AGZSU_MALODIV_OTK
+(
+ID INTEGER,
+DT_START TIMESTAMP,
+DT_FINISH TIMESTAMP,
+VN_UVR_START FLOAT,
+VN_UVR_FINISH FLOAT,
+RO_N FLOAT,
+DELTA_VOL FLOAT,
+DELTA_MASS FLOAT,
+ALARMSCODE INTEGER,
+ALARMSTIMESEC INTEGER,
+WHICHKOEFFSAVED INTEGER,
+PRIMARY KEY(ID)
+);
+
++autoincrement on id
 */
 
