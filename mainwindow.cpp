@@ -12,8 +12,8 @@
 
 #include "./src_libmodbus/modbus.h"
 
-//#define PRILUKI
-#define GGPZ
+#define PRILUKI
+//#define GGPZ
 
 
 #ifdef PRILUKI
@@ -65,6 +65,7 @@ struct uzel
     "172.16.57.72","fire_ggpz_gaz","GGPZ_GAZ","waiting queue...","gaz",
     "172.16.223.50","fire_agzsu_malodiv","AGZSU_MALODIV_1H","waiting queue...","agzsu_malodiv_1h",
     "172.16.223.50","fire_agzsu_malodiv","AGZSU_MALODIV_OTK","waiting queue...","agzsu_malodiv_otk",
+    "172.16.55.34","fire_malodiv","VON_MALODIV_SOU","waiting queue...","vosn",
 #endif
 
 #ifdef GGPZ
@@ -85,7 +86,7 @@ struct uzel
         "172.16.57.72","fire_ggpz_gaz","GGPZ_GAZ","waiting queue...","gaz",
         "172.16.223.50","fire_agzsu_malodiv","AGZSU_MALODIV_1H","waiting queue...","agzsu_malodiv_1h",
         "172.16.223.50","fire_agzsu_malodiv","AGZSU_MALODIV_OTK","waiting queue...","agzsu_malodiv_otk",
-
+        "172.16.55.34","fire_malodiv","VON_MALODIV_SOU","waiting queue...","vosn",
 #endif
 
 
@@ -272,6 +273,9 @@ void ThreadPollObjects::PollVosn(int i)
     }
 
     mb = modbus_new_tcp(uzels[i].IP_addr.toStdString().c_str(), 502);
+
+    modbus_set_response_timeout(mb, 10, 0); // до коннекта, так таймаут будет и для коннекта
+    modbus_set_byte_timeout(mb, 0, 0);
 
     if (modbus_connect(mb)!=0 )
     {
@@ -512,6 +516,9 @@ void ThreadPollObjects::Poll1Uvr2Nord(int i)
 
     mb = modbus_new_tcp(uzels[i].IP_addr.toStdString().c_str(), 502);
 
+    modbus_set_response_timeout(mb, 10, 0); // до коннекта, так таймаут будет и для коннекта
+    modbus_set_byte_timeout(mb, 0, 0);
+
     if (modbus_connect(mb)!=0 )
     {
         //QMessageBox::information(this,"Test","Зв'язок з об'єктом відсутній!!!",QMessageBox::Ok);
@@ -707,6 +714,9 @@ void ThreadPollObjects::Poll1Uvr2Nord1MM(int i)
     }
 
     mb = modbus_new_tcp(uzels[i].IP_addr.toStdString().c_str(), 502);
+
+    modbus_set_response_timeout(mb, 10, 0); // до коннекта, так таймаут будет и для коннекта
+    modbus_set_byte_timeout(mb, 0, 0);
 
     if (modbus_connect(mb)!=0 )
     {
@@ -913,6 +923,9 @@ void ThreadPollObjects::Poll4Uvr(int i)
     }
 
     mb = modbus_new_tcp(uzels[i].IP_addr.toStdString().c_str(), 502);
+
+    modbus_set_response_timeout(mb, 10, 0); // до коннекта, так таймаут будет и для коннекта
+    modbus_set_byte_timeout(mb, 0, 0);
 
     if (modbus_connect(mb)!=0 )
     {
@@ -1131,6 +1144,9 @@ void ThreadPollObjects::PollGaz(int i)
 
     mb = modbus_new_tcp(uzels[i].IP_addr.toStdString().c_str(), 502);
 
+    modbus_set_response_timeout(mb, 10, 0); // до коннекта, так таймаут будет и для коннекта
+    modbus_set_byte_timeout(mb, 0, 0);
+
     if (modbus_connect(mb)!=0 )
     {
         //QMessageBox::information(this,"Test","Зв'язок з об'єктом відсутній!!!",QMessageBox::Ok);
@@ -1337,6 +1353,9 @@ void ThreadPollObjects::PollAgzsuMalodiv_1h(int i)
 
     mb = modbus_new_tcp(uzels[i].IP_addr.toStdString().c_str(), 502);
 
+    modbus_set_response_timeout(mb, 10, 0); // до коннекта, так таймаут будет и для коннекта
+    modbus_set_byte_timeout(mb, 0, 0);
+
     if (modbus_connect(mb)!=0 )
     {
         //QMessageBox::information(this,"Test","Зв'язок з об'єктом відсутній!!!",QMessageBox::Ok);
@@ -1533,6 +1552,9 @@ void ThreadPollObjects::PollAgzsuMalodiv_otk(int i)
     }
 
     mb = modbus_new_tcp(uzels[i].IP_addr.toStdString().c_str(), 502);
+
+    modbus_set_response_timeout(mb, 10, 0); // до коннекта, так таймаут будет и для коннекта
+    modbus_set_byte_timeout(mb, 0, 0);
 
     if (modbus_connect(mb)!=0 )
     {
